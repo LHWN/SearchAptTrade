@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+    <html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MySQL 조회</title>
+
+        <style>
+        .div-container {
+            overflow-y: auto; /* 세로 스크롤바 추가 */
+            max-height: 150px; /* 최대 높이 설정 */
+        }
+        </style>
+
+        <script>
+<!--            fetch('/getDistinctData')-->
+<!--                .then(response => {-->
+<!--                    if(!response.ok)-->
+<!--                        throw new Error('Network Error!');-->
+<!--                    return response.json();-->
+<!--                })-->
+<!--                .then(data => {-->
+<!--                   console.log(data);-->
+
+<!--                   for (const item of data) {-->
+<!--                       console.log(item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM);-->
+<!--                       const dropdown = document.getElementById('distinctData');-->
+
+<!--                       data.forEach(option => {-->
+<!--                            document.getElementById('divDistinctData').innerText = item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM;-->
+<!--                            const optionElement = document.createElement('option');-->
+<!--                            optionElement.textContent = item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM;-->
+<!--                            dropdown.appendChild(optionElement);-->
+<!--                       })-->
+<!--                   }-->
+
+
+<!--                }) -->
+
+
+
+
+            async function getDistinctData() {
+                result = "";
+                await fetch('/getDistinctData')
+                .then(response => {
+                    if(!response.ok)
+                        throw new Error('Network Error!');
+                    return response.json();
+                })
+                .then(data => {
+                   for (const item of data) {
+                       console.log(item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM);
+                       data = item.APTNM + " / " + item.EXCLUUSEAR + " / " + item.JIBUN + " / " + item.UMDNM + "\n";
+                       result += data;
+                   }
+                   document.getElementById('divDistinctData').innerText = result;
+                })
+            }
+
+            async function getComparedData() {
+                const comparedYear = document.getElementById('comparedYear').value;
+                const comparedMonth = document.getElementById('comparedMonth').value;
+
+                const param = {
+                    "comparedYear": comparedYear,
+                    "comparedMonth": comparedMonth
+                };
+
+                await fetch('/getComparedData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(param)
+                })
+                .then(response => {
+                    if(!response.ok)
+                        throw new Error('Network Error!');
+                    return response.json();
+                })
+                .then(data => {
+                    for (const item of data) {
+                       console.log(item);
+                   }
+                })
+            }
+        </script>
+    </head>
+    <body>
+        <h1>MySQL 데이터 조회</h1>
+        <button onclick="getDistinctData()">아파트/평형 조회</button>
+        <div id="divDistinctData" style="div-container">Loading...</div><hr />
+
+        <input type="text" id="comparedYear" placeholder="YYYY">
+        <input type="text" id="comparedMonth" placeholder="MM">
+        <button onclick="getComparedData()">22/10~24/09 차이 1억 이하 조회</button>
+    </body>
+    </html>

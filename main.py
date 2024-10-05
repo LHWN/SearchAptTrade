@@ -11,7 +11,7 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    data = getRTMSDataSvcAptTrade(11200, 202408)  # 2022년 01월 성동구
+    data = getRTMSDataSvcAptTrade(11200, 202410)  # 2022년 01월 성동구
     # data = getRTMSDataSvcAptTrade(11200, 202212)  # 2022년 02월 성동구
 
     loop = asyncio.get_event_loop()

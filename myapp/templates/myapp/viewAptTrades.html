@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View Trades of Apartment</title>
+</head>
+<body>
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // CSRF 토큰을 찾습니다
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    async function selectTrade() {
+        alert("here");
+        const response = await fetch('/selectTrade', {
+        method: 'POST',
+        headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+        body: JSON.stringify({})
+        })
+        .then(response => response.text())
+        .then(data => {
+            alert(data);
+        });
+<!--            const data = await response.json;-->
+<!--            alert(data);-->
+    }
+
+function selectTrades() {
+    const xhr = new XMLHttpRequest();
+            xhr.open("GET", "../test.py", true); // Python 스크립트 경로
+            xhr.send();
+            xhr.onload = function() {
+                alert(xhr.responseText); // 응답 처리
+            }
+}
+</script>
+<h1>View Trades of Apartment</h1>
+    <ul>
+        {% for trade in aptTrades %}
+            <li>
+                <h2>{{ trade.aptnm }}</h2>
+                    <button onclick="selectTrades()">조회</button>
+                <p>{{ trade.aptdong }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
