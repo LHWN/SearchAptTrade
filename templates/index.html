@@ -13,34 +13,8 @@
         </style>
 
         <script>
-<!--            fetch('/getDistinctData')-->
-<!--                .then(response => {-->
-<!--                    if(!response.ok)-->
-<!--                        throw new Error('Network Error!');-->
-<!--                    return response.json();-->
-<!--                })-->
-<!--                .then(data => {-->
-<!--                   console.log(data);-->
-
-<!--                   for (const item of data) {-->
-<!--                       console.log(item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM);-->
-<!--                       const dropdown = document.getElementById('distinctData');-->
-
-<!--                       data.forEach(option => {-->
-<!--                            document.getElementById('divDistinctData').innerText = item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM;-->
-<!--                            const optionElement = document.createElement('option');-->
-<!--                            optionElement.textContent = item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM;-->
-<!--                            dropdown.appendChild(optionElement);-->
-<!--                       })-->
-<!--                   }-->
-
-
-<!--                }) -->
-
-
-
-
             async function getDistinctData() {
+                document.getElementById('divDistinctData').innerText = 'Loading...';
                 result = "";
                 await fetch('/getDistinctData')
                 .then(response => {
@@ -61,7 +35,7 @@
             async function getComparedData() {
                 const comparedYear = document.getElementById('comparedYear').value;
                 const comparedMonth = document.getElementById('comparedMonth').value;
-
+                result = "";
                 const param = {
                     "comparedYear": comparedYear,
                     "comparedMonth": comparedMonth
@@ -81,19 +55,77 @@
                 })
                 .then(data => {
                     for (const item of data) {
-                       console.log(item);
+                       console.log(item.APTNM + item.EXCLUUSEAR + item.JIBUN + item.UMDNM);
+                       data = item.APTNM + " / " + item.EXCLUUSEAR + " / " + item.JIBUN + " / " + item.UMDNM + "전:" + item.DEALAMOUNT + " 후:" + item.DEALAMOUNT2 + " diff:" + item.DIFF + "\n";
+                       result += data;
                    }
+                   document.getElementById('divComparedData').innerText = result;
+                })
+            }
+
+            async function insertDealAmount() {
+                const lawdCd = document.getElementById('lawd').value;
+
+                const param = {
+                    "lawdCd": lawdCd
+                };
+                await fetch('/insertDealAmount', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(param)
+                })
+                .then(response => {
+                    if(!response.ok)
+                        throw new Error('Network Error!');
+                    return response.json();
+                })
+                .then(data => {
+                    alert("INSERT SUCCESS");
                 })
             }
         </script>
     </head>
     <body>
         <h1>MySQL 데이터 조회</h1>
+        <h2>아파트/평형 데이터 종류 조회</h2>
         <button onclick="getDistinctData()">아파트/평형 조회</button>
-        <div id="divDistinctData" style="div-container">Loading...</div><hr />
+        <div id="divDistinctData" style="div-container"></div><hr />
 
-        <input type="text" id="comparedYear" placeholder="YYYY">
-        <input type="text" id="comparedMonth" placeholder="MM">
-        <button onclick="getComparedData()">22/10~24/09 차이 1억 이하 조회</button>
+        <h2>22/10~23/3 현재 매매가 비교</h2>
+        <button onclick="getComparedData()">성동구 조회</button>
+        <div id="divComparedData" stle="div-container"></div><hr />
+
+        <h2>지역별 매매가 데이터 넣기 (22/10~23/03)</h2>
+        <label for="lawd">지역명</label>
+        <select name="lawd" id="lawd">
+            <option value="11110">종로구</option>
+            <option value="11140">중구</option>
+            <option value="11170">용산구</option>
+            <option value="11200">성동구</option>
+            <option value="11215">광진구</option>
+            <option value="11230">동대문구</option>
+            <option value="11260">중랑구</option>
+            <option value="11290">성북구</option>
+            <option value="11305">강북구</option>
+            <option value="11320">도봉구</option>
+            <option value="11350">노원구</option>
+            <option value="11380">은평구</option>
+            <option value="11410">서대문구</option>
+            <option value="11440">마포구</option>
+            <option value="11470">양천구</option>
+            <option value="11500">강서구</option>
+            <option value="11530">구로구</option>
+            <option value="11545">금천구</option>
+            <option value="11560">영등포구</option>
+            <option value="11590">동작구</option>
+            <option value="11620">관악구</option>
+            <option value="11650">서초구</option>
+            <option value="11680">강남구</option>
+            <option value="11710">송파구</option>
+            <option value="11740">강동구</option>
+        </select>
+        <button onclick="insertDealAmount()">매매가 넣기</button>
     </body>
     </html>

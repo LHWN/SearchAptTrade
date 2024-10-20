@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import HTMLResponse
@@ -6,6 +8,8 @@ from sqlalchemy import create_engine, text, column
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import BaseModel
 from datetime import datetime
+
+from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade
 
 app = FastAPI()
 now = datetime.now()
@@ -16,6 +20,9 @@ templates = Jinja2Templates(directory="templates")
 class SearchParam(BaseModel):
     comparedYear: str
     comparedMonth: str
+
+class InsertParam(BaseModel):
+    lawdCd: str
 
 @app.get("/", response_class=HTMLResponse)
 async def get_html(request: Request):
@@ -47,18 +54,19 @@ async def getComparedData(param: SearchParam):
     print("현재", now.month-1)
 
     currentYear = now.year
-    print(now.month-1)
     currentMonth = (str(now.month-1)).lstrip('0')
-    query = """SELECT t1.id, t2.id AS id2, t1.APTNM, t2.APTNM AS APTNM2, t1.EXCLUUSEAR, t2.EXCLUUSEAR AS EXCLUUSEAR2, t1.UMDNM, t2.UMDNM AS UMDNM2, t1.JIBUN, t2.JIBUN AS JIBUN2, t1.DEALAMOUNT, t2.DEALAMOUNT AS DEALAMOUNT2, t1.DEALYEAR, t1.DEALMONTH, t2.DEALYEAR AS DEALYEAR2, t2.DEALMONTH AS DEALMONTH2
-FROM apt_trade t1
-JOIN apt_trade t2 ON t1.APTNM = t2.APTNM AND t1.EXCLUUSEAR = t2.EXCLUUSEAR AND t1.UMDNM = t2.UMDNM AND t1.JIBUN = t2.JIBUN
-WHERE t1.id != t2.id
-AND t1.DEALYEAR = """ + str(param.comparedYear) + """
-AND t1.DEALMONTH = """ + str(param.comparedMonth) + """
-AND t2.DEALYEAR = """ + str(currentYear) + """
-AND t2.DEALMONTH = """ + str(currentMonth) + """
-AND ABS(t1.DEALAMOUNT - t2.DEALAMOUNT) <= 10000"""
-
+    query = """SELECT t1.id, t2.id AS id2, t1.APTNM, t2.APTNM AS APTNM2, t1.EXCLUUSEAR, t2.EXCLUUSEAR AS EXCLUUSEAR2, t1.UMDNM, t2.UMDNM AS UMDNM2, t1.JIBUN, t2.JIBUN AS JIBUN2, 
+                    t1.DEALAMOUNT, t2.DEALAMOUNT AS DEALAMOUNT2, 
+                    ABS(CAST(REPLACE(t1.DEALAMOUNT,',','') AS SIGNED) - CAST(REPLACE(t2.DEALAMOUNT,',','') AS SIGNED)) AS DIFF, 
+                    t1.DEALYEAR, t1.DEALMONTH, t2.DEALYEAR AS DEALYEAR2, t2.DEALMONTH AS DEALMONTH2
+                    FROM apt_trade t1
+                    JOIN apt_trade t2 ON t1.APTNM = t2.APTNM AND t1.EXCLUUSEAR = t2.EXCLUUSEAR AND t1.UMDNM = t2.UMDNM AND t1.JIBUN = t2.JIBUN
+                    WHERE t1.id != t2.id
+                    AND ((t1.DEALYEAR = 2022 AND t1.DEALMONTH >= 10)
+                    OR (t1.DEALYEAR = 2023 AND t1.DEALMONTH <= 3))
+                    AND t2.DEALYEAR = 2024
+                    AND t2.DEALMONTH = 9
+                    AND ABS(CAST(REPLACE(t1.DEALAMOUNT,',','') AS SIGNED) - CAST(REPLACE(t2.DEALAMOUNT,',','') AS SIGNED)) <= 10000;"""
 
     try:
         print("query 실행 : {query}")
@@ -75,6 +83,31 @@ AND ABS(t1.DEALAMOUNT - t2.DEALAMOUNT) <= 10000"""
         print("Error:", str(e))
         return None
 
+@app.post("/insertDealAmount")
+async def insertDealAmount(param: InsertParam):
+    print("insertDealAmount 함수 진입")
+    lawdCd = param.lawdCd
+
+    # 202210 202211 202212
+    # 202301 202302 202303
+
+    initialYear = 202210
+    data = list()
+
+    for i in range(3):
+        tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
+        data.extend(tempData)
+        initialYear += 1
+
+    initialYear = 202301
+    for i in range(3):
+        tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
+        data.extend(tempData)
+        initialYear += 1
+
+    print("최종 data", data)
+    print(type(data))
+    await insertDBAptTrade(data, lawdCd)
 
 @app.get("/fetchData")
 async def fetchData():

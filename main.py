@@ -11,11 +11,12 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    data = getRTMSDataSvcAptTrade(11200, 202410)  # 2022년 01월 성동구
+    print("main method")
+    # data = getRTMSDataSvcAptTrade(11200, 202410)  # 2022년 01월 성동구
     # data = getRTMSDataSvcAptTrade(11200, 202212)  # 2022년 02월 성동구
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(insertDBAptTrade(data))
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(insertDBAptTrade(data))
     # print("최종 데이터 : %r" % data)
 
     # fromDate = 202201

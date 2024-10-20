@@ -1,13 +1,7 @@
-from http.client import responses
-from xml.etree.ElementTree import tostring
-import asyncio
 import aiomysql
-
 import pymysql
 import requests
 import json
-import pymysql as mysql
-from pymysql import connect
 
 __LICENSE = "loPLOF7k/X7V+KWnnNDDm3hY85x217xn62UKczTLBNUyOpob1fi6Xk2ByPK1XATvwG14huNi4ST3DHBfoIyqfA=="
 
@@ -60,21 +54,29 @@ def getRTMSDataSvcAptTrade(lawdCd, dealYmd):
 
     return data
 
-# "INSERT INTO table_test(name, region) VALUES (%s,%s)"
-
-async def insertDBAptTrade(result):
+async def insertDBAptTrade(result, lawdCd):
+    print("## insertDBAptTrade 함수 진입")
+    print(result)
+    print(type(result))
+    print([(item['dealDay']) for item in result])
     conn = None
     try:
         # MYSQL DB 연결
         conn = await aiomysql.connect(
-            host='localhost',\
+            host='localhost',
             user='root',
             password='gd16741',
             db='realEstateTrade'
         )
+        tableName = ""
+
+        if lawdCd == '11110':
+            tableName = 'apt_trade_jongro'
+        elif lawdCd == '':
+            tableName = ''
 
         sql = """
-        INSERT INTO apt_trade (APTDONG, APTNM, BUILDYEAR, CDEALDAY, CDEALTYPE, DEALAMOUNT, DEALDAY, DEALMONTH, DEALYEAR, DEALINGGBN, EXCLUUSEAR, FLOOR, JIBUN, LANDLEASEHOLDGBN, RGSTDATE, SGGCD, SLERGBN, UMDNM)
+        INSERT INTO """ + tableName + """ (APTDONG, APTNM, BUILDYEAR, CDEALDAY, CDEALTYPE, DEALAMOUNT, DEALDAY, DEALMONTH, DEALYEAR, DEALINGGBN, EXCLUUSEAR, FLOOR, JIBUN, LANDLEASEHOLDGBN, RGSTDATE, SGGCD, SLERGBN, UMDNM)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
