@@ -1,5 +1,4 @@
-import asyncio
-
+from dateutil.relativedelta import relativedelta
 from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import HTMLResponse
@@ -9,7 +8,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from pydantic import BaseModel
 from datetime import datetime
 
-from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade
+from sqlalchemy.sql.functions import current_date
+from typing_extensions import dataclass_transform
+
+from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade
 
 app = FastAPI()
 now = datetime.now()
@@ -23,6 +25,8 @@ class SearchParam(BaseModel):
 
 class InsertParam(BaseModel):
     lawdCd: str
+
+
 
 @app.get("/", response_class=HTMLResponse)
 async def get_html(request: Request):
@@ -85,33 +89,60 @@ async def getComparedData(param: SearchParam):
 
 @app.post("/insertDealAmount")
 async def insertDealAmount(param: InsertParam):
-    print("insertDealAmount 함수 진입")
+    print("### insertDealAmount 함수 진입")
     lawdCd = param.lawdCd
 
     # 202210 202211 202212
     # 202301 202302 202303
 
-    initialYear = 202210
     data = list()
 
+    initialYear = 202210
     for i in range(3):
+        print(initialYear, "년도 조회")
         tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
         data.extend(tempData)
         initialYear += 1
 
     initialYear = 202301
     for i in range(3):
+        print(initialYear, "년도 조회")
         tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
         data.extend(tempData)
         initialYear += 1
 
     print("최종 data", data)
-    print(type(data))
     await insertDBAptTrade(data, lawdCd)
+
+@app.post("/insertCurrentDealAmount")
+async def insertCurrentDealAmount(param: InsertParam):
+    print("### insertCurrentDealAmount 함수 진입")
+    lawdCd = param.lawdCd
+
+    data = list()
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+    data = getRTMSDataSvcAptTrade(lawdCd, lastMonth)
+
+    print("### 현재 데이터 조회", data)
+    await insertDBAptTrade(data, lawdCd)
+
+@app.post("/searchComparisonDealAmount")
+async def searchComparisonDealAmount(param: InsertParam):
+    print("### searchComparisonDealAmount 함수 진입")
+    lawdCd = param.lawdCd
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+
+    data = list()
+    data = await getComparisonDBAptTrade(lawdCd, lastMonth)
+
+    return data
 
 @app.get("/fetchData")
 async def fetchData():
-    print("fetchData()")
     query = "SELECT * FROM apt_trade"
     try:
         with engine.connect() as connection:

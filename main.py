@@ -12,19 +12,14 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("main method")
-    # data = getRTMSDataSvcAptTrade(11200, 202410)  # 2022년 01월 성동구
-    # data = getRTMSDataSvcAptTrade(11200, 202212)  # 2022년 02월 성동구
 
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(insertDBAptTrade(data))
-    # print("최종 데이터 : %r" % data)
 
-    # fromDate = 202201
-    # for i in range(11):
-    #     fromDate += i
-    #     print("for 문 요청 시작 : %r" % fromDate)
-    #     data = getRTMSDataSvcAptTrade(11200, fromDate)
-    #
-    #     # 비동기 함수 실행
-    #     loop = asyncio.get_event_loop()
-    #     loop.run_until_complete(insertDBAptTrade(data))
+#### 실행방법 ####
+# 1. source myenv/bin/activate
+# ㄴ가상환경 실행
+# 2. mysql -u root -p
+# ㄴ데이터베이스 서버 구동
+# 3. use realEstateTrade;
+# ㄴ데이터베이스 연결
+# 4. python3 dbUtils.py
+# ㄴ실행하려는 PYTHON 파일 실행
