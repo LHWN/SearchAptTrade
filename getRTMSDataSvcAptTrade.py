@@ -1,20 +1,12 @@
-from calendar import month
-
 import aiomysql
 import pymysql
 import requests
 import json
 
+from pymysql import connect
 from sqlalchemy.testing import rowset
 
 __LICENSE = "loPLOF7k/X7V+KWnnNDDm3hY85x217xn62UKczTLBNUyOpob1fi6Xk2ByPK1XATvwG14huNi4ST3DHBfoIyqfA=="
-
-dbConfig = {
-        'host': 'localhost',
-        'user': 'root',
-        'password': 'gd16741',
-        'db': 'realEstateTrade'
-    }
 
 # 코드에 따라 테이블명 지정
 tables = {
@@ -143,6 +135,8 @@ async def insertDBAptTrade(result, lawdCd):
         if not conn.closed:
             # cursor.close()
             conn.close()
+
+
 
 async def getComparisonDBAptTrade(lawdCd, lastMonth):
     print("### getComparisonDBAptTrade 함수 진입")

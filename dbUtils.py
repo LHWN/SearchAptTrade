@@ -11,6 +11,7 @@ from datetime import datetime
 from sqlalchemy.sql.functions import current_date
 from typing_extensions import dataclass_transform
 
+from getRTMSDataSvcAptRent import getRTMSDataSvcAptRent, insertDBAptRent
 from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade
 
 app = FastAPI()
@@ -127,6 +128,20 @@ async def insertCurrentDealAmount(param: InsertParam):
 
     print("### 현재 데이터 조회", data)
     await insertDBAptTrade(data, lawdCd)
+
+@app.post("/insertCurrentRentAmount")
+async def insertCurrentRentAmount(param: InsertParam):
+    print("### insertCurrentReantAmount 함수 진입")
+    lawdCd = param.lawdCd
+
+    data = list()
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+    data = getRTMSDataSvcAptRent(lawdCd, lastMonth)
+
+    print("### 데이터 조회", data)
+    await insertDBAptRent(data, lawdCd)
 
 @app.post("/searchComparisonDealAmount")
 async def searchComparisonDealAmount(param: InsertParam):
