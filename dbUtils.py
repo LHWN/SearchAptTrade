@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import create_engine, text, column
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import BaseModel
 from datetime import datetime
@@ -12,7 +12,7 @@ from sqlalchemy.sql.functions import current_date
 from typing_extensions import dataclass_transform
 
 from getRTMSDataSvcAptRent import getRTMSDataSvcAptRent, insertDBAptRent
-from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade
+from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade, getDiffOfTradeRent
 
 app = FastAPI()
 now = datetime.now()
@@ -153,6 +153,19 @@ async def searchComparisonDealAmount(param: InsertParam):
 
     data = list()
     data = await getComparisonDBAptTrade(lawdCd, lastMonth)
+
+    return data
+
+@app.post("/searchDiffOfTradeRent")
+async def searchDiffOfTradeRent(param: InsertParam):
+    print("### SearchDiffOfTradeRent 함수 진입")
+    lawdCd = param.lawdCd
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+
+    data = list()
+    data = await getDiffOfTradeRent(lawdCd, lastMonth)
 
     return data
 

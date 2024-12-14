@@ -32,6 +32,7 @@
             })
         }
 
+<!--        22/10~23/3 까지 매매가랑 현재가랑 비교해서 1억 미만 조회-->
         async function getComparedData() {
             const comparedYear = document.getElementById('comparedYear').value;
             const comparedMonth = document.getElementById('comparedMonth').value;
@@ -139,9 +140,6 @@
 
         async function SearchComparisonDealAmount() {
             const lawdCd = document.getElementById('lawdComparison').value;
-
-            console.log(lawdCd);
-
             const param = {
                 "lawdCd": lawdCd
             };
@@ -167,6 +165,36 @@
                 });
                 dataArea.innerText = result;
                 alert("Search comparison of data");
+            })
+        }
+
+        async function SearchDiffOfTradeRent() {
+            const lawdCd = document.getElementById('lawdDiff').value;
+            const param = {
+                "lawdCd": lawdCd
+            };
+
+            await fetch('/searchDiffOfTradeRent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(param)
+            })
+            .then(response => {
+                if(!response.ok)
+                    throw new Error('Network Error!');
+                return response.json();
+            })
+            .then(data => {
+                const dataArea = document.getElementById('diffOfTradeRent');
+                result = "";
+                data.forEach(item => {
+                    result += item;
+                    console.log(item);
+                });
+                dataArea.innerText = result;
+                alert("SUCCESS Searching a Diff Between Trade and Rent");
             })
         }
     </script>
@@ -329,5 +357,44 @@
 </select>
 <button onclick="SearchComparisonDealAmount()">매매가 조회</button>
 <div id="comparisonDealAmount"></div>
+
+<hr/>
+<h2>매매가-전세가 차이 1억 미만</h2>
+<label for="lawd">지역명</label>
+<select name="lawd" id="lawdDiff">
+    <option>-----서울시-----</option>
+    <option value="11110">종로구</option>
+    <option value="11140">중구</option>
+    <option value="11170">용산구</option>
+    <option value="11200">성동구</option>
+    <option value="11215">광진구</option>
+    <option value="11230">동대문구</option>
+    <option value="11260">중랑구</option>
+    <option value="11290">성북구</option>
+    <option value="11305">강북구</option>
+    <option value="11320">도봉구</option>
+    <option value="11350">노원구</option>
+    <option value="11380">은평구</option>
+    <option value="11410">서대문구</option>
+    <option value="11440">마포구</option>
+    <option value="11470">양천구</option>
+    <option value="11500">강서구</option>
+    <option value="11530">구로구</option>
+    <option value="11545">금천구</option>
+    <option value="11560">영등포구</option>
+    <option value="11590">동작구</option>
+    <option value="11620">관악구</option>
+    <option value="11650">서초구</option>
+    <option value="11680">강남구</option>
+    <option value="11710">송파구</option>
+    <option value="11740">강동구</option>
+    <option>-----성남시-----</option>
+    <option value="41135">분당구</option>
+    <option>-----용인시-----</option>
+    <option value="41465">수지구</option>
+</select>
+<button onclick="SearchDiffOfTradeRent()">조회</button>
+<div id="diffOfTradeRent"></div>
+
 </body>
 </html>
