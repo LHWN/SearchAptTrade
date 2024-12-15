@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from sqlalchemy.sql.functions import current_date
+from starlette.staticfiles import StaticFiles
 from typing_extensions import dataclass_transform
 
 from getRTMSDataSvcAptRent import getRTMSDataSvcAptRent, insertDBAptRent
@@ -19,6 +20,10 @@ now = datetime.now()
 DATABASE_URL = "mysql+pymysql://root:gd16741@localhost:3306/realEstateTrade"
 engine = create_engine(DATABASE_URL)
 templates = Jinja2Templates(directory="templates")
+app.mount("/css", StaticFiles(directory="templates/css"), name="css")
+app.mount("/img", StaticFiles(directory="templates/img"), name="img")
+app.mount("/vendor", StaticFiles(directory="templates/vendor"), name="vendor")
+app.mount("/js", StaticFiles(directory="templates/js"), name="js")
 
 class SearchParam(BaseModel):
     comparedYear: str
