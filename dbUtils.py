@@ -25,6 +25,7 @@ app.mount("/img", StaticFiles(directory="templates/img"), name="img")
 app.mount("/vendor", StaticFiles(directory="templates/vendor"), name="vendor")
 app.mount("/js", StaticFiles(directory="templates/js"), name="js")
 
+
 class SearchParam(BaseModel):
     comparedYear: str
     comparedMonth: str
@@ -37,25 +38,6 @@ class InsertParam(BaseModel):
 @app.get("/", response_class=HTMLResponse)
 async def get_html(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
-
-@app.get("/getDistinctData")
-async def getDistincData():
-    print("getDistincData 함수 진입")
-    query = "SELECT DISTINCT APTNM, EXCLUUSEAR, UMDNM, JIBUN FROM apt_trade"
-    try:
-        with engine.connect() as connection:
-            result = connection.execute(text(query))
-            data = result.fetchall()
-            columns = result.keys()
-            result = [dict(zip(columns, row)) for row in data]
-            print(result)
-        return result
-    except SQLAlchemyError as e:
-        print("Database Error:", str(e))
-        return None
-    except Exception as e:
-        print("Error:", str(e))
-        return None
 
 @app.post("/getComparedData")
 async def getComparedData(param: SearchParam):

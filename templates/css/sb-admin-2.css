@@ -4556,6 +4556,12 @@ input[type="button"].btn-block {
   border-bottom: 1px solid #e3e6f0;
 }
 
+.d-flex {
+    display: flex;
+    align-items: center;  /* 세로로 중앙 정렬 */
+    justify-content: space-between;  /* 여백을 양쪽으로 분배 */
+}
+
 .card-header:first-child {
   border-radius: calc(0.35rem - 1px) calc(0.35rem - 1px) 0 0;
 }
