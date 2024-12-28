@@ -16,7 +16,12 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
+    <link href="{{ url_for('vendor', path='/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('css', path='/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('vendor', path='/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <script src="{{ url_for('vendor', path='/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ url_for('vendor', path='/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ url_for('js', path='/demo/datatables-demo.js') }}"></script>
 
     <style>
         .dropdown-city {
