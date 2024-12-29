@@ -13,7 +13,8 @@ from starlette.staticfiles import StaticFiles
 from typing_extensions import dataclass_transform
 
 from getRTMSDataSvcAptRent import getRTMSDataSvcAptRent, insertDBAptRent
-from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade, getDiffOfTradeRent
+from getRTMSDataSvcAptTrade import getRTMSDataSvcAptTrade, insertDBAptTrade, getComparisonDBAptTrade, \
+    getDiffOfTradeRent, getRTMSDataSvcAptTradeDev
 
 app = FastAPI()
 now = datetime.now()
@@ -88,14 +89,14 @@ async def insertDealAmount(param: InsertParam):
     initialYear = 202210
     for i in range(3):
         print(initialYear, "년도 조회")
-        tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
+        tempData = getRTMSDataSvcAptTradeDev(lawdCd, initialYear)
         data.extend(tempData)
         initialYear += 1
 
     initialYear = 202301
     for i in range(3):
         print(initialYear, "년도 조회")
-        tempData = getRTMSDataSvcAptTrade(lawdCd, initialYear)
+        tempData = getRTMSDataSvcAptTradeDev(lawdCd, initialYear)
         data.extend(tempData)
         initialYear += 1
 
@@ -111,7 +112,7 @@ async def insertCurrentDealAmount(param: InsertParam):
     now = datetime.now()
     lastMonth = now - relativedelta(months=1)
     lastMonth = lastMonth.strftime("%Y%m")
-    data = getRTMSDataSvcAptTrade(lawdCd, lastMonth)
+    data = getRTMSDataSvcAptTradeDev(lawdCd, lastMonth)
 
     print("### 현재 데이터 조회", data)
     await insertDBAptTrade(data, lawdCd)

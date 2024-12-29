@@ -29,7 +29,7 @@ tablesOfTrade = {
             "11500": "apt_trade_gangseo",
             "11530": "apt_trade_guro",
             "11545": "apt_trade_geumchun",
-            "11560": "apt_trade_yeongdeunpo",
+            "11560": "apt_trade_yeongdeungpo",
             "11590": "apt_trade_dongjak",
             "11620": "apt_trade_gwanak",
             "11650": "apt_trade_seocho",
@@ -74,6 +74,53 @@ tablesOfRent = {
             # 용인시 수지구
             "41465": "apt_rent_suji"
         }
+
+def getRTMSDataSvcAptTradeDev(lawdCd, dealYmd):
+    print("### 조회 시작 %r" % dealYmd)
+    PATH = "/getRTMSDataSvcAptTradeDev"
+    API_HOST = "http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev"
+    url = API_HOST + PATH
+    headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': 'application/json'}
+
+    pageNum = 1
+
+    params = {
+        "LAWD_CD": lawdCd,  # 성동구
+        "DEAL_YMD": dealYmd,  # 2022년 01월
+        "serviceKey": __LICENSE,
+        "pageNo": pageNum
+    }
+
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response = json.loads(response.text)
+
+        data = response.get("response").get("body").get("items").get("item")
+        numOfRows = response.get("response").get("body").get("numOfRows")
+        totalCount = response.get("response").get("body").get("totalCount")
+    except Exception as e:
+        print(f"Error! : {e}")
+
+    print("### 응답 데이터 갯수 : %r" % totalCount)
+
+    if (numOfRows < totalCount):
+        if int(totalCount % numOfRows) == 0:
+            loop = int(totalCount / numOfRows) - 1
+        else:
+            loop = int(totalCount / numOfRows)
+        for i in range(loop):
+            params["pageNo"] = str(i + 2)
+            # print("페이지 번호 : %r" % params["pageNo"])
+
+            response = requests.get(url, headers=headers, params=params)
+            response = json.loads(response.text)
+            tempData = response.get("response").get("body").get("items").get("item")
+
+            if type(tempData) is list:
+                data.extend(tempData)
+            elif type(tempData) is dict:
+                data.append(tempData)
+    return data
 
 def getRTMSDataSvcAptTrade(lawdCd, dealYmd):
     print("### 조회 시작 %r" % dealYmd)
@@ -141,18 +188,48 @@ async def insertDBAptTrade(result, lawdCd):
         sql = """
         INSERT IGNORE INTO """ + tableName + """ (APTDONG, APTNM, BUILDYEAR, CDEALDAY, CDEALTYPE, 
         DEALAMOUNT, DEALDAY, DEALMONTH, DEALYEAR, DEALINGGBN, EXCLUUSEAR, FLOOR, JIBUN, 
-        LANDLEASEHOLDGBN, RGSTDATE, SGGCD, SLERGBN, UMDNM)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        LANDLEASEHOLDGBN, RGSTDATE, SGGCD, SLERGBN, UMDNM, 
+        APTSEQ, BONBUN, BUBUN, LANDCD, ROADNM, ROADNMBONBUN, ROADNMBUBUN, ROADNMCD, ROADNMSEQ, ROADNMSGGCD, UMDCD)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         # json > tuple 변환
-        dataTuples = [(item['aptDong'], item['aptNm'], item['buildYear'], item['cdealDay'],
-                       item['cdealType'], item['dealAmount'], item['dealDay'], item['dealMonth'],
-                       item['dealYear'], item['dealingGbn'], item['excluUseAr'], item['floor'],
-                       item['jibun'], item['landLeaseholdGbn'], item['rgstDate'], item['sggCd'],
-                       item['slerGbn'], item['umdNm']) for item in result]
+        dataTuples = [
+            (
+                item.get('aptDong', ''),
+                item.get('aptNm', ''),
+                item.get('buildYear', ''),
+                item.get('cdealDay', ''),
+                item.get('cdealType', ''),
+                item.get('dealAmount', ''),
+                item.get('dealDay', ''),
+                item.get('dealMonth', ''),
+                item.get('dealYear', ''),
+                item.get('dealingGbn', ''),
+                item.get('excluUseAr', ''),
+                item.get('floor', ''),
+                item.get('jibun', ''),
+                item.get('landLeaseholdGbn', ''),
+                item.get('rgstDate', ''),
+                item.get('sggCd', ''),
+                item.get('slerGbn', ''),
+                item.get('umdNm', ''),
+                item.get('aptSeq', ''),
+                item.get('bonbun', ''),
+                item.get('bubun', ''),
+                item.get('landCd', ''),
+                item.get('roadNm', ''),  # roadNm 없으면 공백
+                item.get('roadNmBonbun', ''),
+                item.get('roadNmBubun', ''),
+                item.get('roadNmCd', ''),
+                item.get('roadNmSeq', ''),
+                item.get('roadNmSggCd', ''),
+                item.get('umdCd', '')
+            )
+            for item in result
+        ]
 
-        print("## dataTuples", dataTuples)
+        print("## dataTuples", dataTuples, len(dataTuples))
         print("## query", sql)
         # Connection 으로부터 Cursor 생성
         async with conn.cursor() as cursor:
