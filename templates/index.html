@@ -244,13 +244,46 @@
                 return response.json();
             })
             .then(data => {
-                const dataArea = document.getElementById('diffOfTradeRent');
                 result = "";
+                const tableBody = document.getElementById("dataTableBody");
+
                 data.forEach(item => {
                     result += item;
                     console.log(item);
+
+                    const tr = document.createElement("tr");
+
+                    const tdAptNm = document.createElement("td");
+                    tdAptNm.textContent = item[0];
+                    tr.appendChild(tdAptNm);
+
+                    const tdExcluUseAr = document.createElement("td");
+                    tdExcluUseAr.textContent = item[1];
+                    tr.appendChild(tdExcluUseAr);
+
+                    const tdFloor = document.createElement("td");
+                    tdFloor.textContent = item[2];
+                    tr.appendChild(tdFloor);
+
+                    const tdDealAmount = document.createElement("td");
+                    tdDealAmount.textContent = item[3] + "(" + item[4] + ")" + item[9];
+                    tr.appendChild(tdDealAmount);
+
+                    const tdAddress = document.createElement("td");
+                    tdAddress.textContent = item[5] + "(" + item[6] + ")";
+                    tr.appendChild(tdAddress);
+
+                    const tdBuildYear = document.createElement("td");
+                    tdBuildYear.textContent = item[7];
+                    tr.appendChild(tdBuildYear);
+
+                    const tdDealDay = document.createElement("td");
+                    tdDealDay.textContent = item[8];
+                    tr.appendChild(tdDealDay);
+
+                    tableBody.appendChild(tr);
                 });
-                dataArea.innerText = result;
+
                 alert("SUCCESS Searching a Diff Between Trade and Rent");
             })
         }
@@ -658,42 +691,27 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                             <thead>
                                                 <tr>
-                                                    <th>Name</th>
-                                                    <th>Position</th>
-                                                    <th>Office</th>
-                                                    <th>Age</th>
-                                                    <th>Start date</th>
-                                                    <th>Salary</th>
+                                                    <th>아파트명</th>
+                                                    <th>전용면적</th>
+                                                    <th>층수</th>
+                                                    <th>매매가 (전세가)</th>
+                                                    <th>주소</th>
+                                                    <th>건축년도</th>
+                                                    <th>계약일</th>
                                                 </tr>
                                             </thead>
                                             <tfoot>
                                                 <tr>
-                                                    <th>Name</th>
-                                                    <th>Position</th>
-                                                    <th>Office</th>
-                                                    <th>Age</th>
-                                                    <th>Start date</th>
-                                                    <th>Salary</th>
+                                                    <th>아파트명</th>
+                                                    <th>전용면적</th>
+                                                    <th>층수</th>
+                                                    <th>매매가 (전세가)</th>
+                                                    <th>주소</th>
+                                                    <th>건축년도</th>
+                                                    <th>계약일</th>
                                                 </tr>
                                             </tfoot>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Tiger Nixon</td>
-                                                    <td>System Architect</td>
-                                                    <td>Edinburgh</td>
-                                                    <td>61</td>
-                                                    <td>2011/04/25</td>
-                                                    <td>$320,800</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Garrett Winters</td>
-                                                    <td>Accountant</td>
-                                                    <td>Tokyo</td>
-                                                    <td>63</td>
-                                                    <td>2011/07/25</td>
-                                                    <td>$170,750</td>
-                                                </tr>
-                                            </tbody>
+                                            <tbody id="dataTableBody"></tbody>
                                         </table>
                                     </div>
 

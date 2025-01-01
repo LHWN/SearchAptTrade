@@ -319,7 +319,8 @@ async def getDiffOfTradeRent(lawdCd, lastMonth):
         month = lastMonth[4:6]
 
         sql = """
-            SELECT t1.id, t2.id AS id2,t1.APTNM, t1.EXCLUUSEAR, t2.EXCLUUSEAR, t1.DEALAMOUNT, t2.DEPOSIT, t2.MONTHLYRENT, 
+            SELECT t1.APTNM, t1.EXCLUUSEAR, t1.FLOOR, t1.DEALAMOUNT, t2.DEPOSIT, 
+            t1.UMDNM, t1.ROADNM, t1.BUILDYEAR, t1.DEALDAY, 
             ABS(CAST(REPLACE(t1.DEALAMOUNT,',','') AS SIGNED) - CAST(REPLACE(t2.DEPOSIT,',','') AS SIGNED)) AS DIFF
             FROM """ + tableNameOfTrade + """ t1, """ + tableNameOfRent + """ t2
             WHERE (t1.APTNM = t2.APTNM AND t1.EXCLUUSEAR = t2.EXCLUUSEAR AND t1.UMDNM = t2.UMDNM AND t1.JIBUN = t2.JIBUN)
