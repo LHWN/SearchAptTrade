@@ -35,10 +35,23 @@ class InsertParam(BaseModel):
     lawdCd: str
 
 
-
 @app.get("/", response_class=HTMLResponse)
 async def get_html(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/index.html", response_class=HTMLResponse)
+async def get_html(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/insertDataOfTradeOnLastMonth.html", response_class=HTMLResponse)
+async def move_html(request: Request):
+    print(request)
+    return templates.TemplateResponse("insertDataOfTradeOnLastMonth.html", {"request": request})
+
+@app.get("/insertDataOfRentOnLastMonth.html", response_class=HTMLResponse)
+async def move_html(request: Request):
+    print(request)
+    return templates.TemplateResponse("insertDataOfRentOnLastMonth.html", {"request": request})
 
 @app.post("/getComparedData")
 async def getComparedData(param: SearchParam):
