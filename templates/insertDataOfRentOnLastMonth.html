@@ -136,9 +136,28 @@
                     throw new Error('Network Error!');
                 return response.json();
             })
-            then(data => {
+            .then(data => {
                 console.log("INSERT SUCCESS : CURRENT RENT AMOUNT");
                 alert("INSERT SUCCESS : CURRENT RENT AMOUNT");
+            })
+        }
+
+        async function InsertBulkRentAmount() {
+            await fetch('/insertBulkRentAmount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify()
+            })
+            .then(response => {
+                if(!resopnse.ok)
+                    throw new Error('Network Error!');
+                return response.json();
+            })
+            .then(data => {
+                console.log("INSERT SUCCESS : BULK RENT AMOUNT");
+                alert("INSERT SUCCESS : BULK RENT AMOUNT");
             })
         }
 
@@ -174,24 +193,28 @@
     </script>
 
     <style>
-    .dropdown-city {
-      right: 0.75rem;
-      max-height: 400px;
-      overflow-y: auto; /* 수직 스크롤 추가 */
-    }
+        .dropdown-city {
+          right: 0.75rem;
+          max-height: 400px;
+          overflow-y: auto; /* 수직 스크롤 추가 */
+        }
 
-    .label-city {
-      display: block;
-      width: 100%;
-      padding: 0.25rem 1.5rem;
-      clear: both;
-      font-weight: 400;
-      text-align: inherit;
-      white-space: nowrap;
-      background-color: transparent;
-      border: 0;
-      margin: 0;
-    }
+        .label-city {
+          display: block;
+          width: 100%;
+          padding: 0.25rem 1.5rem;
+          clear: both;
+          font-weight: 400;
+          text-align: inherit;
+          white-space: nowrap;
+          background-color: transparent;
+          border: 0;
+          margin: 0;
+        }
+        .btn-insert {
+            display: flex;
+            justify-content: space-between;
+        }
   </style>
 </head>
 
@@ -239,7 +262,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="insertDataOfTradeOnLastMonth.html">Trade (Last month)</a>
-                        <a class="collapse-item" href="cards.html">Rent (Last month)</a>
+                        <a class="collapse-item" href="insertDataOfRentOnLastMonth.html">Rent (Last month)</a>
                         <a class="collapse-item" href="tradeOfRef.html">Trade (22/10~23/3)</a>
                     </div>
                 </div>
@@ -538,11 +561,11 @@
 
                             <div class="card position-relative">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Insert a data of Trade (<span id="spanLastMonth">Last Month</span>)</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Insert a data of Rent (<span id="spanLastMonth">Last Month</span>)</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div class="small mb-1">Select a city which you want to insert a data of trade:</div>
-                                    <div class="dropdown mb-4">
+                                    <div class="small mb-1">Select a city which you want to insert a data of rent:</div>
+                                    <div class="dropdown mb-4 btn-insert">
                                         <button class="btn btn-primary dropdown-toggle" type="button"
                                             id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                             aria-expanded="false">
@@ -583,36 +606,14 @@
                                                 <label class="label-city">용인시</label>
                                                 <a class="dropdown-item" onclick="InsertCurrentRentAmount('41465')">수지구</a>
                                         </div>
+                                        <a onclick="InsertBulkRentAmount()" class="btn btn-success btn-icon-split">
+                                            <span class="icon text-white-50">
+                                                <i class="fas fa-check"></i>
+                                            </span>
+                                            <span class="text">Bulk Insert</span>
+                                        </a>
                                     </div>
-                                    <p class="mb-0 small">Note: This is a function of inserting the data of trade on last month.</p>
-                                    <hr />
-                                    <div class="small mb-1">Navbar Dropdown Example:</div>
-                                    <nav class="navbar navbar-expand navbar-light bg-light mb-4">
-                                        <a class="navbar-brand" href="#">Navbar</a>
-                                        <ul class="navbar-nav ml-auto">
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                                    role="button" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    Dropdown
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right animated--grow-in"
-                                                    aria-labelledby="navbarDropdown">
-
-
-
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-
-
-
-
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                                    <p class="mb-0 small">Note: This is a function of inserting the data of rent on last month.</p>
                                 </div>
                             </div>
 

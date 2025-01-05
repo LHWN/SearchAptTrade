@@ -120,7 +120,6 @@
 
         async function InsertCurrentRentAmount() {
             const lawdCd = document.getElementById('lawdInsertRentCurrent').value;
-            console.log("dd");
             const param = {
                 "lawdCd": lawdCd
             };
@@ -137,9 +136,28 @@
                     throw new Error('Network Error!');
                 return response.json();
             })
-            then(data => {
+            .then(data => {
                 console.log("INSERT SUCCESS : CURRENT RENT AMOUNT");
                 alert("INSERT SUCCESS : CURRENT RENT AMOUNT");
+            })
+        }
+
+        async function InsertBulkDealAmount() {
+            await fetch('/insertBulkDealAmount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify()
+            })
+            .then(response => {
+                if(!resopnse.ok)
+                    throw new Error('Network Error!');
+                return response.json();
+            })
+            .then(data => {
+                console.log("INSERT SUCCESS : BULK DEAL AMOUNT");
+                alert("INSERT SUCCESS : BULK DEAL AMOUNT");
             })
         }
 
@@ -245,7 +263,7 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="insertDataOfTradeOnLastMonth.html">Trade (Last month)</a>
-                        <a class="collapse-item" href="cards.html">Rent (Last month)</a>
+                        <a class="collapse-item" href="insertDataOfRentOnLastMonth.html">Rent (Last month)</a>
                         <a class="collapse-item" href="tradeOfRef.html">Trade (22/10~23/3)</a>
                     </div>
                 </div>
@@ -589,7 +607,7 @@
                                                 <label class="label-city">용인시</label>
                                                 <a class="dropdown-item" onclick="InsertCurrentDealAmount('41465')">수지구</a>
                                         </div>
-                                        <a onclick="" class="btn btn-success btn-icon-split">
+                                        <a onclick="InsertBulkDealAmount()" class="btn btn-success btn-icon-split">
                                             <span class="icon text-white-50">
                                                 <i class="fas fa-check"></i>
                                             </span>
@@ -597,34 +615,6 @@
                                         </a>
                                     </div>
                                     <p class="mb-0 small">Note: This is a function of inserting the data of trade on last month.</p>
-                                    <hr />
-                                    <div class="small mb-1">Navbar Dropdown Example:</div>
-                                    <nav class="navbar navbar-expand navbar-light bg-light mb-4">
-                                        <a class="navbar-brand" href="#">Navbar</a>
-                                        <ul class="navbar-nav ml-auto">
-                                            <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                                                    role="button" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    Dropdown
-                                                </a>
-                                                <div class="dropdown-menu dropdown-menu-right animated--grow-in"
-                                                    aria-labelledby="navbarDropdown">
-
-
-
-                                                    <a class="dropdown-item" href="#">Action</a>
-                                                    <a class="dropdown-item" href="#">Another action</a>
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item" href="#">Something else here</a>
-
-
-
-
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </nav>
                                 </div>
                             </div>
 

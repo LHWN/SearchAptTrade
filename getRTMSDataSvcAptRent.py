@@ -28,7 +28,7 @@ tables = {
             "11500": "apt_rent_gangseo",
             "11530": "apt_rent_guro",
             "11545": "apt_rent_geumchun",
-            "11560": "apt_rent_yeongdeunpo",
+            "11560": "apt_rent_yeongdeungpo",
             "11590": "apt_rent_dongjak",
             "11620": "apt_rent_gwanak",
             "11650": "apt_rent_seocho",

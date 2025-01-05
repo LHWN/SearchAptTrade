@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from pydantic import BaseModel
 from datetime import datetime
 
+from sqlalchemy.orm import defer
 from sqlalchemy.sql.functions import current_date
 from starlette.staticfiles import StaticFiles
 from typing_extensions import dataclass_transform
@@ -26,6 +27,12 @@ app.mount("/img", StaticFiles(directory="templates/img"), name="img")
 app.mount("/vendor", StaticFiles(directory="templates/vendor"), name="vendor")
 app.mount("/js", StaticFiles(directory="templates/js"), name="js")
 
+arrCity = ['11110', '11140', '11170', '11200', '11215',
+           '11230', '11260', '11290', '11305', '11320',
+           '11350', '11380', '11410', '11440', '11470',
+           '11500', '11530', '11545', '11560', '11590',
+           '11620', '11650', '11680', '11710', '11740',
+           '41135', '41465']
 
 class SearchParam(BaseModel):
     comparedYear: str
@@ -45,12 +52,10 @@ async def get_html(request: Request):
 
 @app.get("/insertDataOfTradeOnLastMonth.html", response_class=HTMLResponse)
 async def move_html(request: Request):
-    print(request)
     return templates.TemplateResponse("insertDataOfTradeOnLastMonth.html", {"request": request})
 
 @app.get("/insertDataOfRentOnLastMonth.html", response_class=HTMLResponse)
 async def move_html(request: Request):
-    print(request)
     return templates.TemplateResponse("insertDataOfRentOnLastMonth.html", {"request": request})
 
 @app.post("/getComparedData")
@@ -143,6 +148,41 @@ async def insertCurrentRentAmount(param: InsertParam):
 
     print("### 데이터 조회", data)
     await insertDBAptRent(data, lawdCd)
+
+@app.post("/insertBulkDealAmount")
+async def insertBulkDealAmount():
+    print("### insertBulkDealAmount 함수 진입")
+
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+    print("Targeting Completed : ", lastMonth)
+    data = list()
+    for item in arrCity:
+        lawdCd = item
+        data = getRTMSDataSvcAptTradeDev(lawdCd, lastMonth)
+
+        print("### Start a Inserting : ", lawdCd)
+        print("### Searching Completed : ", data)
+        await insertDBAptTrade(data, lawdCd)
+
+@app.post("/insertBulkRentAmount")
+async def insertBulkRentAmount():
+    print("### insertBulkRentAmount 함수 진입")
+
+    now = datetime.now()
+    lastMonth = now - relativedelta(months=1)
+    lastMonth = lastMonth.strftime("%Y%m")
+    print("Targeting Completed : ", lastMonth)
+    data = list()
+    for item in arrCity:
+        lawdCd = item
+        data = getRTMSDataSvcAptRent(lawdCd, lastMonth)
+
+        print("### Start a Inserting : ", lawdCd)
+        print("### Searching Completed : ", data)
+        await insertDBAptRent(data, lawdCd)
+
 
 @app.post("/searchComparisonDealAmount")
 async def searchComparisonDealAmount(param: InsertParam):
