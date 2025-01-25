@@ -326,7 +326,8 @@ async def getDiffOfTradeRent(lawdCd, lastMonth):
             WHERE (t1.APTNM = t2.APTNM AND t1.EXCLUUSEAR = t2.EXCLUUSEAR AND t1.UMDNM = t2.UMDNM AND t1.JIBUN = t2.JIBUN)
             AND t1.DEALYEAR=""" + year + """ AND t1.DEALMONTH= """ + month + """
             AND t2.DEALYEAR=""" + year + """ AND t2.DEALMONTH= """ + month + """
-            AND (t1.DEALAMOUNT - t2.DEPOSIT) <= 25000 AND t2.MONTHLYRENT=0
+            AND t2.MONTHLYRENT=0
+            AND ABS(CAST(REPLACE(t1.DEALAMOUNT,',','') AS SIGNED) - CAST(REPLACE(t2.DEPOSIT,',','') AS SIGNED)) <= 25000;
             """
 
         print("### QUERY : ", sql)
